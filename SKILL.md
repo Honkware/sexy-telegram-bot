@@ -1,3 +1,7 @@
+---
+name: sexy-telegram-bot
+description: Production-grade Telegram bot guidance with grammY and TypeScript. Safe message editing, callback routing, session flows, rate-limited dispatch, inline keyboard UX, and permission layers. Use this skill whenever the user is building a Telegram bot, adding buttons or callbacks, handling bot errors, structuring a growing bot, or designing multi-step conversational flows, even if they don't explicitly ask for architecture guidance.
+---
 # sexy-telegram-bot
 
 Everything you need to ship Telegram bots with grammY and TypeScript that hold up under real traffic. Covers message editing, callback routing as features grow, session state for multi-step DM flows, rate-limited notifications, and getting inline keyboards to feel right.
