@@ -2,6 +2,7 @@
 name: sexy-telegram-bot
 description: Production-grade Telegram bot guidance with grammY and TypeScript. Safe message editing, callback routing, session flows, rate-limited dispatch, inline keyboard UX, and permission layers. Use this skill whenever the user is building a Telegram bot, adding buttons or callbacks, handling bot errors, structuring a growing bot, or designing multi-step conversational flows, even if they don't explicitly ask for architecture guidance.
 ---
+
 # sexy-telegram-bot
 
 Everything you need to ship Telegram bots with grammY and TypeScript that hold up under real traffic. Covers message editing, callback routing as features grow, session state for multi-step DM flows, rate-limited notifications, and getting inline keyboards to feel right.
@@ -53,7 +54,7 @@ Do the same for `answerCallbackQuery` with a `safeAnswer` wrapper so the button 
 
 ## Callback Routing
 
-One handler, prefix dispatch. Callback data format is `prefix:action:id[:extra]` and prefixes stay short since Telegram caps callback data at 64 bytes.
+One handler, prefix dispatch. Callback data format is `prefix:action:id[:extra]` and prefixes stay short since Telegram caps callback data at 64 bytes. Always match against known prefixes and validate IDs before acting on them since callback data comes from the client and can be spoofed.
 
 ```typescript
 bot.on("callback_query:data", safe(async (ctx) => {
@@ -69,7 +70,7 @@ bot.on("callback_query:data", safe(async (ctx) => {
 
 - **Session state.** A typed union like `{ flow: "create_project"; step: "name" | "description"; data: { name?: string } }` stored in a `Map<number, DmSession>`. Three helpers: `getSession`, `setSession`, `clearSession`. Private message handlers check for an active session first and fall through if there isn't one.
 - **Inline keyboards.** Pagination with `« Prev` / `Next »` buttons using `prefix_pg:N` callbacks. Checklists with `☑` / `☐` toggling via callback data. Confirmation with two buttons (action + cancel). Every detail view gets a `« Back` button. Always edit in place with `safeEdit`.
-- **DM deep links.** Move users from group to private chat with a URL button to `https://t.me/${BOT_USERNAME}?start=${payload}`. Parse the payload in `/start` to route to the right panel.
+- **DM deep links.** Move users from group to private chat with a URL button to `https://t.me/${BOT_USERNAME}?start=${payload}`. Parse the payload in `/start` and match it against known routes before acting on it since the start parameter is user-controlled.
 - **Rate-limited dispatch.** Bottleneck with `maxConcurrent: 1`, `minTime: 50`, one queue per chat. Batch and send sequentially. Disable link previews on notifications.
 - **Permissions.** Role hierarchy: owner > admin > manager > member, each inheriting from below. Early-return checks (`if (isOwner(userId)) return true`). Per-resource granularity with `canAdd`, `canRemove`, `canManage` when needed.
 - **Formatting.** Escape `&`, `<`, `>` in user content. Build messages as `string[]` joined with `\n`. Use `<b>` for headers, `┄┄┄┄` separators for structure. Stay under 4096 chars.
